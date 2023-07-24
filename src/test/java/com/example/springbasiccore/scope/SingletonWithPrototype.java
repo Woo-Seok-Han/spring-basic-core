@@ -1,15 +1,18 @@
 package com.example.springbasiccore.scope;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import lombok.RequiredArgsConstructor;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Scope;
 
+@SpringBootTest
 public class SingletonWithPrototype {
 
     @Test
@@ -39,16 +42,20 @@ public class SingletonWithPrototype {
 
         ClientBean clientBean2 = ac.getBean(ClientBean.class);
         int count2 = clientBean2.logic();
-        assertThat(count2).isEqualTo(2);
+        assertThat(count2).isEqualTo(1);
     }
 
     @Scope("singleton")
     @RequiredArgsConstructor
     static class ClientBean {
 
-        private final PrototpyeBean prototpyeBean;
+        private final ObjectProvider<PrototpyeBean> prototpyeBeanObjectProvider;
+//        private final PrototpyeBean prototpyeBean;
 
         public int logic() {
+//            prototpyeBean.addCount();
+//            return prototpyeBean.getCount();
+            PrototpyeBean prototpyeBean = prototpyeBeanObjectProvider.getObject();
             prototpyeBean.addCount();
             return prototpyeBean.getCount();
         }
